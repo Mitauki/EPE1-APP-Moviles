@@ -57,11 +57,27 @@ function encaminar(pedido, respuesta, camino) {
       break;
     }
     case 'web/registro':{
-      registro(respuesta);
+      registros(pedido, respuesta);
       break;
     }
     case 'web/login': {
       login(pedido,respuesta);
+      break;
+    }
+    case 'web/logeo':{
+      ingresar(pedido, respuesta);
+      break;
+    }
+    case 'web/registrados':{
+      registrados(pedido, respuesta);
+      break;
+    }
+    case 'web/mostrarComentario':{
+      mostrarComentario(pedido, respuesta);
+      break;
+    }
+    case 'web/comentarios':{
+      comentarios(pedido, respuesta)
       break;
     }
     default: {
@@ -642,7 +658,7 @@ function nosotros(pedido, respuesta) {
           <h2>Somos un grupo de amigos que les gusta el anime y la cultura asiatica, para poder entregarles la mejor
               entretencion</h2>
           <h2>¿Tienes sugerencias?</h2>
-          <form id="jajas" action="registro" method="post">
+          <form id="jajas" action="mostrarComentario" method="post">
               Ingrese su nombre:
               <input type="text" name="nombre" size="30"><br>
               Ingrese Apellido:
@@ -650,7 +666,7 @@ function nosotros(pedido, respuesta) {
               Ingrese Correo
               <input type="text" name="correo" size="30"><br>
               Comentario
-              <textarea name="comen" cols="30" rows="10"></textarea>
+              <textarea name="comentario" cols="30" rows="10"></textarea>
               <br>
               <input class="btn" type="submit" value="Enviar">
           </form>
@@ -741,16 +757,18 @@ function login(pedido, respuesta) {
   
       <br>
   
+      <form method="POST" action="logeo">
       <section class="form-login">
-      <h5>Inicio de Sesion</h5>
-      Ingrese su nombre de usuario:
-      <input class="controls" type="text" name="usuario" value="" placeholder="Usuario" size="30">            
-      Ingrese su Contraseña:
-      <input class="controls" type="password" name="contrasena" value="" placeholder="Contraseña" size="30">
-      <input class="buttons" type="submit" name="" value="Ingresar">
-      <p><a href="registrarse">¿Olvidastes tu Contraseña?</a></p>
-
-    </section>
+          <h5>Iniciar Secion</h5>
+          Ingrese su nombre de usuario:
+          <input class="controls" type="text" name="user" value="" placeholder="Usuario" size="30">
+          Ingrese su Contraseña:
+          <input class="controls" type="password" name="pass" value="" placeholder="Contraseña" size="30">
+          <input class="buttons" type="submit" name="" value="Ingresar">
+          <p><a href="">¿Olvidastes tu Contraseña?</a></p>
+    
+        </section>
+      </form>
 
       
   </body>
@@ -761,7 +779,7 @@ function login(pedido, respuesta) {
 }
 
 
-function registro(pedido,respuesta) {
+function registros(pedido,respuesta) {
 
 let info = '';
 
@@ -796,6 +814,59 @@ pedido.on('end', () => {
 
 }
 
+function mostrarComentario(pedido,respuesta) {
+
+  let info = '';
+  
+  pedido.on('data', datosparciales => {
+  
+   info += datosparciales;
+  
+  });
+  
+  pedido.on('end', () => {
+  
+   const formulario = querystring.parse(info);
+  
+   respuesta.writeHead(200, {'Content-Type': 'text/html'});
+  
+   const pagina=
+  
+    `<!doctype html><html><head></head><body>
+  
+    Nombre de usuario:${formulario['nombre']}<br>
+    Apellido de Usuario:${formulario['apellido']}<hr>
+    Correo del Usuario:${formulario['correo']}<hr>
+    Comentario:${formulario['comentario']}<hr>
+    <a href="index.html">Retornar</a>
+  
+    </body></html>`;
+  
+   respuesta.end(pagina);
+  
+   grabarComentario(formulario);
+  
+  });	
+  
+  }
+  
+  function grabarComentario(formulario){
+
+    const datos=`  Nombre de usuario:${formulario['nombre']}<br>
+    Apellido de Usuario:${formulario['apellido']}<hr>
+    Correo del Usuario:${formulario['correo']}<hr>
+    Comentario:${formulario['comentario']}<hr>`;
+   
+    fs.appendFile('web/comentarios.txt',datos,error=>{
+   
+      if(error)
+   
+      console.log(error);
+   
+    });
+   
+   }
+
 function grabarEnArchivo(formulario){
 
  const datos=`Nombre de usuario:${formulario['nombre']}<br>
@@ -811,7 +882,28 @@ function grabarEnArchivo(formulario){
 
 }
 
-function leerComentarios(respuesta){
+function ingresar(pedido, respuesta) {
+  let info = '';
+  pedido.on('data', datosparciales => {
+    info += datosparciales;
+  });
+
+  pedido.on('end', function () {
+    const formulario = querystring.parse(info);
+    if (formulario['user'] == 'Admin' && formulario['pass'] == '1234') {
+      respuesta.writeHead(302, {
+        'Location': 'registrados'
+      });
+    } else {
+      respuesta.writeHead(302, {
+        'Location': '/'
+      });
+    }
+    respuesta.end();
+  });
+}
+
+function registrados(pedido, respuesta){
 
 fs.readFile('web/registrados.txt', (error,datos)=> {
 
