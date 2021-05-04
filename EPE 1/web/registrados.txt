@@ -1,6 +1,0 @@
-Nombre de usuario:alan<br>
- Contraseña:1234<hr>Nombre de usuario:jorge <br>
- Contraseña:4321<hr>Nombre de usuario:jean<br>
- Contraseña:54321<hr>Nombre de usuario:jano<br>
- Contraseña:1234<hr>Nombre de usuario:carlos<br>
- Contraseña:123456<hr>
