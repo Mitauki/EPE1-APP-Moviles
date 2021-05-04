@@ -1,4 +1,0 @@
-  Nombre de usuario:fin<br>
-    Apellido de Usuario:torres<hr>
-    Correo del Usuario:fin@gmail.com<hr>
-    Comentario:esta buena la pagina<hr>
